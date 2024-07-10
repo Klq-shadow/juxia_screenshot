@@ -25,6 +25,7 @@ Introducing Star VIP VPN, the ultimate solution for unlimited internet access. W
     <link rel="canonical" href="https://download.juxia.com/apps/59593" />
     <link rel="alternate" href="https://h5.juxia.com/apps/59593" hreflang="en" />
     <link rel="stylesheet" href="static/css/contact_us.css" />
+    <link rel="stylesheet" href="static/css/viewer.css">
     <link rel="stylesheet" type="text/css" href="static/css/css.css" />
     <link rel="stylesheet" type="text/css" href="static/css/home.css" />
     <link rel="stylesheet" type="text/css" href="static/css/swiper.min.css" />
@@ -38,6 +39,7 @@ Introducing Star VIP VPN, the ultimate solution for unlimited internet access. W
     <script src="static/js/index.js" type="text/javascript"></script>
     <script type="text/javascript" src="static/js/swiper.min.js"></script>
     <script async src="static/js/6cd993f478b44d91811b05e9a3fef3f1.js"></script>
+    <script src="./static/js/viewer.js"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -407,24 +409,16 @@ Introducing Star VIP VPN, the ultimate solution for unlimited internet access. W
       <div class="swiper-container1 bg" id="xzImg">
         <div class="swiper-wrapper">
           <div class="swiper-slide">
-            <a href="https://imgdownload.juxia.com/upload/202406/26/a1bf24hXu86bmEe.png" data-fancybox="appScreenshot">
               <img alt="STAR VIP VPN screenshot 1" src="static/picture/66666.webp" />
-            </a>
           </div>
           <div class="swiper-slide">
-            <a href="https://imgdownload.juxia.com/upload/202406/26/d51b5StLxhs4jdX.png" data-fancybox="appScreenshot">
               <img alt="STAR VIP VPN screenshot 2" src="static/picture/d51b5stlxhs4jdx.png" />
-            </a>
           </div>
           <div class="swiper-slide">
-            <a href="https://imgdownload.juxia.com/upload/202406/26/7388fyjEWeCIoT3.png" data-fancybox="appScreenshot">
               <img alt="STAR VIP VPN screenshot 3" src="static/picture/7388fyjeweciot3.png" />
-            </a>
           </div>
           <div class="swiper-slide">
-            <a href="https://imgdownload.juxia.com/upload/202406/26/c2dd1wiRXmHYDjv.png" data-fancybox="appScreenshot">
               <img alt="STAR VIP VPN screenshot 4" src="static/picture/c2dd1wirxmhydjv.png" />
-            </a>
           </div>
         </div>
       </div>
@@ -853,4 +847,51 @@ Introducing Star VIP VPN, the ultimate solution for unlimited internet access. W
       });
     </script>
   </body>
+  <script>
+    $(document).ready(function () {
+      var viewer = new Viewer(document.querySelector("#xzImg"), {
+        viewed: function () {
+          var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+              mutation.addedNodes.forEach(function (node) {
+                if (node.nodeType === 1 && $(node).is(".viewer-canvas img")) {
+                  var clickCount = 0;
+                  var clickTimeout;
+
+                  $(node).on("click", function () {
+                    clickCount++;
+                    if (clickCount === 1) {
+                      clickTimeout = setTimeout(function () {
+                        if (clickCount === 1) {
+                          viewer.hide();
+                        }
+                        clickCount = 0;
+                      }, 300);
+                    }
+                  }).on("dblclick", function () {
+                    clearTimeout(clickTimeout);
+                    clickCount = 0;
+                  }).on("touchstart", function (e) {
+                    if (e.touches.length > 1) {
+                      clearTimeout(clickTimeout);
+                      clickCount = 0;
+                    }
+                  });
+                }
+              });
+            });
+          });
+
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+          });
+        },
+      });
+
+      $("#xzImg img").on("click", function () {
+        viewer.show();
+      });
+    });
+  </script>
 </html>
