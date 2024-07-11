@@ -849,48 +849,53 @@ Introducing Star VIP VPN, the ultimate solution for unlimited internet access. W
   </body>
   <script>
     $(document).ready(function () {
-      var viewer = new Viewer(document.querySelector("#xzImg"), {
-        viewed: function () {
-          var observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-              mutation.addedNodes.forEach(function (node) {
-                if (node.nodeType === 1 && $(node).is(".viewer-canvas img")) {
-                  var clickCount = 0;
-                  var clickTimeout;
-
-                  $(node).on("click", function () {
-                    clickCount++;
-                    if (clickCount === 1) {
-                      clickTimeout = setTimeout(function () {
-                        if (clickCount === 1) {
-                          viewer.hide();
-                        }
-                        clickCount = 0;
-                      }, 300);
-                    }
-                  }).on("dblclick", function () {
-                    clearTimeout(clickTimeout);
-                    clickCount = 0;
-                  }).on("touchstart", function (e) {
-                    if (e.touches.length > 1) {
-                      clearTimeout(clickTimeout);
-                      clickCount = 0;
-                    }
-                  });
-                }
-              });
+      var viewer;
+  
+      function initializeViewer() {
+        viewer = new Viewer(document.querySelector("#xzImg"), {
+          zoomRatio: 1,
+          maxZoomRatio: 2,
+          viewed: function () {
+            var canvas = viewer.image.parentElement;
+            var clickCount = 0;
+            var clickTimeout;
+  
+            $(canvas).on("click", function () {
+              clickCount++;
+              if (clickCount === 1) {
+                clickTimeout = setTimeout(function () {
+                  if (clickCount === 1) {
+                    viewer.hide();
+                  }
+                  clickCount = 0;
+                }, 300);
+              }
+            }).on("dblclick", function () {
+              clearTimeout(clickTimeout);
+              clickCount = 0;
+            }).on("touchstart", function (e) {
+              if (e.touches.length > 1) {
+                clearTimeout(clickTimeout);
+                clickCount = 0;
+              }
             });
-          });
-
-          observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-          });
-        },
-      });
-
+          },
+          zoomed: function (event) {
+            if (event.detail.ratio < 1) {
+              viewer.zoomTo(1);
+            }
+          }
+        });
+      }
+  
+      initializeViewer();
+  
       $("#xzImg img").on("click", function () {
-        viewer.show();
+        if (viewer) {
+          viewer.destroy(); // 销毁当前Viewer实例
+        }
+        initializeViewer(); // 重新初始化Viewer实例
+        viewer.show(); // 显示新的Viewer实例
       });
     });
   </script>
